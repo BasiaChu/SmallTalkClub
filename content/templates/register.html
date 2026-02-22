@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .helptext { display: none !important; }
+    ul.errorlist { color: #ff4d4d; list-style: none; padding: 0; font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; }
+</style>
+
+<div style="max-width: 400px; margin: 60px auto; text-align: center;">
+    <h1 style="color: var(--brand-blue); font-family: 'Quicksand', sans-serif; margin-bottom: 20px;">
+        Załóż konto 🌟
+    </h1>
+
+    <div class="card" style="padding: 30px; text-align: left;">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            
+            <button type="submit" class="btn-login" style="width: 100%; margin-top: 15px;">
+                Utwórz konto
+            </button>
+        </form>
+    </div>
+
+    <p style="margin-top: 20px; color: #666;">
+        Masz już konto? 
+        <a href="{% url 'login' %}" style="color: var(--brand-blue); font-weight: 700;">Zaloguj się 🔒</a>
+    </p>
+</div>
+{% endblock %}

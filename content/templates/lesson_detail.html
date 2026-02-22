@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="lesson-detail-container">
+    
+    <a href="{% url 'grammar' %}" class="lesson-back-link">← Wróć do listy</a>
+
+    <h1 class="lesson-main-title">{{ lesson.title }}</h1>
+    
+    <span class="lesson-level-badge">
+        {{ lesson.level.name }}
+    </span>
+
+    <hr class="lesson-divider">
+
+    <div class="lesson-content">
+        {{ lesson.content|safe }}
+    </div>
+
+    <div class="lesson-finish-box">
+        <h3 class="lesson-finish-title">Koniec ćwiczenia! 🏁</h3>
+        
+        {% if request.user.is_authenticated %}
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn-login btn-finish">
+                    Zapisz mój wynik w Strefie Ucznia 🏆
+                </button>
+            </form>
+        {% else %}
+            <p class="lesson-finish-text">
+                Chcesz zapisywać swoje wyniki i śledzić postępy?
+            </p>
+            <a href="{% url 'register' %}" class="btn-login btn-register-pink">
+                Załóż darmowe konto ✨
+            </a>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
