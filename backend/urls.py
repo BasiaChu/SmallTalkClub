@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.conf import settings         
 from django.conf.urls.static import static
-from content.views import home, grammar, exercises, lesson_detail, private_lessons, readings, register_user, login_user, logout_user, student_zone, exercise_level
+from content.views import home, grammar, exercises, lesson_detail, private_lessons, readings, register_user, login_user, logout_user, student_zone, exercise_level, topic_exercises
 
 
 urlpatterns = [
@@ -24,6 +24,7 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="password_reset_confirm.html"), name='password_reset_confirm'),
     path('reset_hasla/gotowe/', auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_complete.html"), name='password_reset_complete'),
     path('exercises/<str:level_name>/', exercise_level, name='exercise_level'),
+    path('exercises/<str:level_name>/<slug:category_slug>/', topic_exercises, name='topic_exercises')
 ]
 
 if settings.DEBUG:

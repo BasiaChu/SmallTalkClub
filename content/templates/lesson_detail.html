@@ -4,39 +4,71 @@
 {% block content %}
 <div class="lesson-detail-container">
     
-    <a href="{% url 'grammar' %}" class="lesson-back-link">← Wróć do listy</a>
+    <a href="javascript:history.back()" class="lesson-back-link">← Wróć</a>
 
     <h1 class="lesson-main-title">{{ lesson.title }}</h1>
-    
-    <span class="lesson-level-badge">
-        {{ lesson.level.name }}
-    </span>
-
+    <span class="lesson-level-badge">{{ lesson.level.name }}</span>
     <hr class="lesson-divider">
 
-    <div class="lesson-content">
-        {{ lesson.content|safe }}
-    </div>
-
-    <div class="lesson-finish-box">
-        <h3 class="lesson-finish-title">Koniec ćwiczenia! 🏁</h3>
+    {% if lesson.type == 'grammar' %}
+        <div class="lesson-content">
+            {{ lesson.content|safe }}
+        </div>
         
-        {% if request.user.is_authenticated %}
-            <form method="POST">
-                {% csrf_token %}
-                <button type="submit" class="btn-login btn-finish">
-                    Zapisz mój wynik w Strefie Ucznia 🏆
-                </button>
-            </form>
-        {% else %}
-            <p class="lesson-finish-text">
-                Chcesz zapisywać swoje wyniki i śledzić postępy?
+        <div style="margin-top: 50px; text-align: center; padding: 20px; background: #f8f9fa; border-radius: 15px;">
+            <p style="font-size: 1.1rem; color: #6c757d;">
+                Teoria opanowana? Przejdź do zakładki <strong>Ćwiczenia</strong>, aby sprawdzić swoją wiedzę! 🚀
             </p>
-            <a href="{% url 'register' %}" class="btn-login btn-register-pink">
-                Załóż darmowe konto ✨
-            </a>
+        </div>
+
+    {% elif lesson.type == 'exercise' %}
+        
+        {% if exercises %}
+        <h2 style="margin-top: 30px; font-weight: bold; color: #333;">🎯 Czas na ćwiczenia!</h2>
+        <div class="exercises-grid">
+            {% for exercise in exercises %}
+                <div class="exercise-card" onclick="toggleCard(this)">
+                    <div class="exercise-title">
+                        {{ exercise.instruction }} 
+                        <span class="arrow-icon">▼</span>
+                    </div>
+                    <div class="exercise-content">
+                        <form onclick="event.stopPropagation();">
+                            {% for item in exercise.items.all %}
+                            <div class="task-row">
+                                <strong>{{ forloop.counter }}.</strong> {{ item.question_text }}
+                                <br>
+                                <input type="text" class="custom-input" placeholder="Wpisz odpowiedź...">
+                            </div>
+                            {% endfor %}
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+            <p>Jeszcze nie dodano zadań do tej karty pracy.</p>
         {% endif %}
-    </div>
+        
+        <div class="lesson-finish-box">
+            <h3 class="lesson-finish-title">Koniec ćwiczenia! 🏁</h3>
+            {% if request.user.is_authenticated %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-login btn-finish">Zapisz mój wynik w Strefie Ucznia 🏆</button>
+                </form>
+            {% else %}
+                <p class="lesson-finish-text">Chcesz zapisywać swoje wyniki i śledzić postępy?</p>
+                <a href="{% url 'register' %}" class="btn-login btn-register-pink">Załóż darmowe konto ✨</a>
+            {% endif %}
+        </div>
+    {% endif %}
 
 </div>
+
+<script>
+    function toggleCard(card) {
+        card.classList.toggle('active');
+    }
+</script>
 {% endblock %}

@@ -1,7 +1,14 @@
-import random  # <-- 1. NOWOŚĆ: Importujemy maszynę losującą!
+import random
 from django import forms
+from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.core.exceptions import ValidationError # <-- Dodaj to, żeby błędy działały!
+
+letters_only = RegexValidator(
+    regex=r'^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]+$',
+    message='Imię i nazwisko mogą zawierać tylko litery.'
+)
 
 # 1. Nasz przyjazny formularz logowania
 class CustomLoginForm(AuthenticationForm):
@@ -16,21 +23,39 @@ class CustomLoginForm(AuthenticationForm):
 
 # 2. Formularz rejestracji z Generatorem Zabawnych Nicków
 class CustomRegisterForm(UserCreationForm):
-    first_name = forms.CharField(required=True, label="Imię")
-    last_name = forms.CharField(required=True, label="Nazwisko")
-    email = forms.EmailField(required=True, label="Adres e-mail")
+    first_name = forms.CharField(
+        required=True, 
+        label="Imię",
+        validators=[letters_only],
+        widget=forms.TextInput(attrs={'placeholder': 'np. Anna'})
+    )
+    last_name = forms.CharField(
+        required=True,
+         label="Nazwisko",
+         validators=[letters_only],
+         widget=forms.TextInput(attrs={'placeholder':'np. Kowalska'})
+    )
+    email = forms.EmailField(
+        required=True, 
+        label="Adres e-mail",
+        widget=forms.EmailInput(attrs={
+            'placeholder': 'np. kowalski@poczta.pl',
+            'autocomplete': 'email',
+            'class': 'form-control' })
+    )
 
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ("first_name", "last_name", "email") 
 
+    # POŁĄCZONA WALIDACJA EMAIL
     def clean_email(self):
         email = self.cleaned_data.get('email').lower()
         if User.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError("Ten adres e-mail jest już zajęty! Zaloguj się lub użyj innego.")
+            raise ValidationError("Ten adres e-mail jest już zajęty! Zaloguj się lub użyj innego.")
         return email
 
-    # --- 2. NOWOŚĆ: Generator Puszystych Naleśników! ---
+    # --- Generator Puszystych Naleśników ---
     def save(self, commit=True):
         user = super().save(commit=False)
         
@@ -45,21 +70,11 @@ class CustomRegisterForm(UserCreationForm):
             "Wróbel", "Jeżyk", "Kotek", "Chomik", "Orzeł", 
             "Sowa", "Łoś", "Jednorożec"]
         
-        # PĘTLA OCHRONNA: Losuj tak długo, aż znajdziesz unikalny nick
         while True:
-            losowy_przymiotnik = random.choice(przymiotniki)
-            losowy_rzeczownik = random.choice(rzeczowniki)
-            # Zwiększyłam zakres liczb z 10-99 na 10-999, żeby było jeszcze mniej powtórek!
-            losowy_numer = random.randint(10, 999) 
-            
-            zabawny_nick = f"{losowy_przymiotnik}{losowy_rzeczownik}{losowy_numer}"
-            
-            # Pytamy bazę: "Czy masz już kogoś takiego?"
+            zabawny_nick = f"{random.choice(przymiotniki)}{random.choice(rzeczowniki)}{random.randint(10, 999)}"
             if not User.objects.filter(username=zabawny_nick).exists():
-                # Jeśli NIE istnieje, przerywamy pętlę (break) - mamy to!
                 break 
         
-        # Zapisujemy nasz w 100% unikalny i wylosowany login
         user.username = zabawny_nick 
         
         if commit:

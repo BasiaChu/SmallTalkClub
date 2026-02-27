@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from .models import Lesson, ExerciseResult
+from .models import Lesson, ExerciseResult, Level, Category
 from .forms import CustomLoginForm, CustomRegisterForm
 
 def home(request):
@@ -28,35 +28,42 @@ def exercises(request):
 
 # --- WIDOK KONKRETNEGO POZIOMU (MAŁE KAFELKI) ---
 def exercise_level(request, level_name):
-    # Mapujemy kody z URL na ładne nazwy dla nagłówka
-    titles = {
-        'a1': 'Poziom A1 🌱',
-        'a2': 'Poziom A2 🌿',
-        'b1': 'Poziom B1 🌳',
-        'b2': 'Poziom B2 🌲',
-        'osmoklasista': 'Egzamin Ósmoklasisty 8️⃣',
-        'matura_podstawa': 'Matura Podstawowa 🎓',
-        'matura_rozszerzenie': 'Matura Rozszerzona 🚀',
-    }
-    
-    display_name = titles.get(level_name, level_name.upper())
+    # Strażnik błędu 404
+    level = get_object_or_404(Level, name__iexact=level_name)
 
-    # Filtrujemy lekcje: muszą pasować do poziomu I być typu 'exercise'
-    # Używamy .iexact, żeby nie martwić się o wielkość liter w bazie
-    lessons = Lesson.objects.filter(level__name__iexact=level_name, type='exercise')
-    
-    completed_ids = []
-    if request.user.is_authenticated:
-        completed_ids = ExerciseResult.objects.filter(user=request.user).values_list('lesson_id', flat=True)
+    categories = Category.objects.filter(lesson__level=level).distinct()
+
+    titles = {
+        'a1': 'Poziom A1 🌱', 'a2': 'Poziom A2 🌿', 'b1': 'Poziom B1 🌳',
+        'b2': 'Poziom B2 🌲', 'osmoklasista': 'Egzamin Ósmoklasisty 8️⃣',
+        'matura_podstawa': 'Matura Podstawowa 🎓', 'matura_rozszerzenie': 'Matura Rozszerzona 🚀',
+    }
+    display_name = titles.get(level_name.lower(), level.name)
 
     return render(request, 'exercise_level_detail.html', {
+        'level': level,
         'level_display': display_name,
-        'lessons': lessons,
-        'completed_ids': completed_ids
+        'categories': categories, # Zamiast 'lessons', wysyłamy teraz kategorie (tematy)
+    })
+
+# NOWA FUNKCJA: Wyświetla listę kart pracy dla konkretnego tematu (np. A2 -> Present Simple)
+def topic_exercises(request, level_name, category_slug):
+    level = get_object_or_404(Level, name__iexact=level_name)
+    category = get_object_or_404(Category, slug=category_slug)
+    
+    # Wyciągamy wszystkie karty pracy (Lessons) dla tego poziomu i tematu
+    worksheets = Lesson.objects.filter(level=level, category=category, type='exercise')
+    
+    return render(request, 'topic_exercises.html', {
+        'level': level,
+        'category': category,
+        'worksheets': worksheets
     })
 
 def lesson_detail(request, slug):
     lesson = get_object_or_404(Lesson, slug=slug)
+
+    exercises = lesson.exercises.all()
 
     if request.method == "POST":
         if request.user.is_authenticated:
@@ -72,7 +79,10 @@ def lesson_detail(request, slug):
             messages.warning(request, "Zaloguj się, aby zapisywać swoje postępy!")
             return redirect('login')
             
-    return render(request, 'lesson_detail.html', {'lesson': lesson})
+    return render(request, 'lesson_detail.html', {
+        'lesson': lesson,
+        'exercises': exercises
+        })
 
 def private_lessons(request):
     return render(request, 'private_lessons.html')

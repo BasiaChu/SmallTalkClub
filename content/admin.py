@@ -1,14 +1,30 @@
 from django.contrib import admin
-from django_summernote.admin import SummernoteModelAdmin
-from .models import Lesson, Level, Category
+from .models import Lesson, Category, Level, Exercise, ExerciseItem
 
-# Rejestrujemy Lekcje z użyciem Summernote (Edytora)
-class LessonAdmin(SummernoteModelAdmin):  # <--- Dziedziczymy po SummernoteModelAdmin
-    summernote_fields = ('content',)      # <--- Wskazujemy, które pole ma być "Wordem"
-    list_display = ('title', 'level', 'type') # To sprawi, że lista lekcji będzie ładniejsza
-    list_filter = ('level', 'type')           # Dodajemy filtry z prawej strony panelu
+# 1. Pozwala dopisywać pytania (Itemy) bezpośrednio w Zadaniu
+class ExerciseItemInline(admin.TabularInline):
+    model = ExerciseItem
+    extra = 1 # Ile pustych pól na pytania ma się pojawić na starcie
 
-# Rejestrujemy pozostałe modele normalnie
-admin.site.register(Lesson, LessonAdmin)
-admin.site.register(Level)
+# 2. Pozwala dopisywać Zadanie bezpośrednio wewnątrz Lekcji
+class ExerciseInline(admin.StackedInline):
+    model = Exercise
+    extra = 1
+    show_change_link = True
+
+@admin.register(Lesson)
+class LessonAdmin(admin.ModelAdmin):
+    # To sprawi, że w liście lekcji od razu widzisz co jest czym
+    list_display = ('title', 'level', 'category', 'type')
+    list_filter = ('level', 'type', 'category')
+    search_fields = ('title',)
+    
+    # TA LINIA TO MAGIA: Wkłada formularz zadań do środka lekcji!
+    inlines = [ExerciseInline]
+
+# Rejestrujemy resztę, żeby były pod ręką
 admin.site.register(Category)
+admin.site.register(Level)
+# Te poniższe są teraz opcjonalne, bo masz je wewnątrz Lesson:
+admin.site.register(Exercise)
+admin.site.register(ExerciseItem)
