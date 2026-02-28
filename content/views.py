@@ -27,11 +27,17 @@ def exercises(request):
     return render(request, 'exercises.html')
 
 # --- WIDOK KONKRETNEGO POZIOMU (MAŁE KAFELKI) ---
-def exercise_level(request, level_name):
-    # Strażnik błędu 404
-    level = get_object_or_404(Level, name__iexact=level_name)
+from .models import Lesson, Level, ExerciseResult # Upewnij się, że masz te importy na górze
 
-    categories = Category.objects.filter(lesson__level=level).distinct()
+def exercise_level(request, level_name):
+    # 1. Pobieramy poziom (np. A2)
+    level = get_object_or_404(Level, name__iexact=level_name)
+    
+    # 2. Wyciągamy KATEGORIE (tematy), które mają przypisaną min. 1 lekcję typu 'exercise' na tym poziomie
+    categories = Category.objects.filter(
+        lesson__level=level, 
+        lesson__type='exercise'
+    ).distinct()
 
     titles = {
         'a1': 'Poziom A1 🌱', 'a2': 'Poziom A2 🌿', 'b1': 'Poziom B1 🌳',
@@ -43,7 +49,7 @@ def exercise_level(request, level_name):
     return render(request, 'exercise_level_detail.html', {
         'level': level,
         'level_display': display_name,
-        'categories': categories, # Zamiast 'lessons', wysyłamy teraz kategorie (tematy)
+        'categories': categories, # Wracamy do wysyłania kategorii!
     })
 
 # NOWA FUNKCJA: Wyświetla listę kart pracy dla konkretnego tematu (np. A2 -> Present Simple)

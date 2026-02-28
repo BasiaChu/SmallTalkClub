@@ -460,23 +460,6 @@ footer {
     text-align: center;
 }
 
-/* Link zapomnianego hasła w logowaniu */
-.forgot-password-link {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.forgot-password-link a {
-    color: #666;
-    font-size: 0.9rem;
-    text-decoration: underline;
-    transition: color 0.3s ease;
-}
-
-.forgot-password-link a:hover {
-    color: #4a90e2; /* Zmienia kolor po najechaniu myszką */
-}
-
 /* --- STRONA KONTAKTU I SOCIAL MEDIA --- */
 
 .contact-page {
@@ -544,14 +527,6 @@ footer {
     background: transparent;
 }
 
-/* To sprawi, że kafelki będą w rzędach */
-.levels-grid {
-    display: grid;
-    /* Automatyczne dopasowanie: min 260px szerokości, max ile wejdzie w rzędzie */
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
-}
 
 /* Upewnij się, że każdy kafelek ma te parametry */
 .level-tile {
@@ -651,74 +626,6 @@ footer {
     color: #666;
 }
 
-/* Siatka dla małych kafelków z tematami */
-.topics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
-}
-
-/* Pojedynczy mały kafelek tematyczny */
-.topic-card {
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    text-decoration: none;
-    border: 2px solid #eee;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease, border-color 0.3s ease;
-}
-
-.topic-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--brand-pink);
-}
-
-.topic-title {
-    color: var(--brand-blue);
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-
-/* Plakietka 'Otwórz zadania' */
-.topic-action-badge {
-    font-size: 0.85rem;
-    color: #888;
-    background: #f8f9fa;
-    padding: 4px 10px;
-    border-radius: 10px;
-    align-self: flex-start;
-}
-
-/* Ikonka ukończenia ✔️ */
-.topic-completed-icon {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    color: #28a745;
-    font-size: 1.2rem;
-}
-
-/* Wygląd pustego stanu (gdy nie ma jeszcze zadań) */
-.empty-state-card {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 40px;
-    background: white;
-    border-radius: 20px;
-}
-
-.empty-title {
-    color: var(--brand-blue);
-}
-
-.empty-text {
-    color: #888;
-}
 /* ===== KAFELKI Z ZADANIAMI (lesson_detail.html) ===== */
 .exercises-grid {
     display: grid;
@@ -778,4 +685,91 @@ footer {
 }
 .exercise-card.active .arrow-icon {
     transform: rotate(180deg);
+}
+
+/* =========================================
+   KARTY ZADAŃ (Tematy i Ćwiczenia)
+   ========================================= */
+
+/* Siatka układająca kafelki obok siebie */
+.topics-grid {
+    display: grid;
+    /* Automatycznie dopasowuje liczbę kolumn, kafelki mają minimum 280px szerokości */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 30px;
+}
+
+/* Wygląd pojedynczego kafelka */
+.topic-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    text-decoration: none; /* Usuwa podkreślenie linku */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    min-height: 150px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Delikatny cień */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efekt najechania myszką na kafelek */
+.topic-card:hover {
+    transform: translateY(-5px); /* Kafelek lekko unosi się do góry */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); /* Cień staje się mocniejszy */
+}
+
+/* Tytuł wewnątrz kafelka (np. "test1", "Zadania - Present Simple") */
+.topic-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #3b4260; /* Ciemny granat z Twojego projektu */
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+/* Pigułka/Przycisk na dole kafelka */
+.topic-action-badge {
+    background-color: #f4f6f8; /* Jasnoszare tło */
+    color: #6b7280; /* Szary tekst */
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Zmiana koloru pigułki, gdy najeżdżasz na cały kafelek */
+.topic-card:hover .topic-action-badge {
+    background-color: #e57373; /* Łososiowy/Różowy kolor z Twoich screenów */
+    color: #ffffff;
+}
+
+/* Pusty stan, gdy nie ma jeszcze zadań */
+.empty-state-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 40px 24px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    grid-column: 1 / -1; /* Rozciąga pusty komunikat na całą szerokość ekranu */
+}
+
+/* Ikonka ukończenia ✔️ */
+.topic-completed-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #28a745;
+    font-size: 1.2rem;
+}
+
+.empty-title {
+    color: var(--brand-blue);
+}
+
+.empty-text {
+    color: #888;
 }

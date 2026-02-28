@@ -10,15 +10,11 @@
     </div>
 
     <div class="topics-grid">
-        {% for lesson in lessons %}
-            <a href="{% url 'lesson_detail' lesson.slug %}" class="topic-card">
+        {% for category in categories %}
+            <a href="{% url 'topic_exercises' level_name=level.name|lower category_slug=category.slug %}" class="topic-card">
                 
-                {% if lesson.id in completed_ids %}
-                    <span class="topic-completed-icon">✔️</span>
-                {% endif %}
-                
-                <h3 class="topic-title">{{ lesson.title }}</h3>
-                <span class="topic-action-badge">Otwórz zadania ✏️</span>
+                <h3 class="topic-title">{{ category.name }}</h3>
+                <span class="topic-action-badge">Zobacz zadania ➔</span>
             </a>
         {% empty %}
             <div class="empty-state-card">
