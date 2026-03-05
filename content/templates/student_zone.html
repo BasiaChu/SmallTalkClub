@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="student-zone-container">
+    
+    <h1 class="student-greeting">
+        Cześć, {{ request.user.username }}! 👋
+    </h1>
+
+    <div class="card progress-card">
+        <h2 class="progress-title">Twoje punkty 🏆</h2>
+        
+        {% if results %}
+            <ul class="results-list">
+            {% for result in results %}
+                <li class="result-item">
+                    <strong>{{ result.lesson.title }}</strong>
+                    <span class="result-score">
+                        {{ result.score }} / {{ result.max_score }}
+                    </span>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-state-text">Brak rozwiązanych ćwiczeń.</p>
+            <a href="{% url 'exercises' %}" class="btn-login btn-small">
+                Rozwiąż pierwsze! ➔
+            </a>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'logout' %}" class="btn-logout">
+        Wyloguj się
+    </a>
+
+</div>
+{% endblock %}

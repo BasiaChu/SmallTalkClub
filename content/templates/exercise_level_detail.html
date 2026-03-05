@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="level-detail-header">
+        <a href="{% url 'exercises' %}" class="back-link">← Wróć do poziomów</a>
+        <h1 class="level-title">{{ level_display }}</h1>
+        <p class="level-subtitle">Wybierz zagadnienie, które chcesz dzisiaj przećwiczyć:</p>
+    </div>
+
+    <div class="topics-grid">
+        {% for category in categories %}
+            <a href="{% url 'topic_exercises' level_name=level.name|lower category_slug=category.slug %}" class="topic-card">
+                
+                <h3 class="topic-title">{{ category.name }}</h3>
+                <span class="topic-action-badge">Zobacz zadania ➔</span>
+            </a>
+        {% empty %}
+            <div class="empty-state-card">
+                <h3 class="empty-title">Jeszcze pusto! 🍃</h3>
+                <p class="empty-text">Wkrótce pojawią się tu nowe zagadnienia i zadania dla tego poziomu.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

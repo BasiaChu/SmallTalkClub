@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="login-wrapper">
+    <h1 class="login-title">
+        Zaloguj się 🔒
+    </h1>
+
+    <div class="card login-card">
+        <form method="POST">
+            {% csrf_token %}
+            
+            {{ form.as_p }}
+            
+            <button type="submit" class="btn-login full-width-btn">
+                Zaloguj
+            </button>
+        </form>
+
+        <div class="forgot-password-link">
+            <a href="{% url 'password_reset' %}">
+                Nie pamiętasz hasła? Kliknij tutaj.
+            </a>
+        </div>
+    </div>
+
+    <p class="register-prompt">
+        Nie masz jeszcze konta? 
+        <a href="{% url 'register' %}" class="register-link">Zarejestruj się ✨</a>
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container text-center mt-5" style="max-width: 800px; padding-bottom: 50px;">
+    
+    <a href="{% url 'exercise_level' level_name=level.name|lower %}" class="text-decoration-none" style="color: #6c757d; font-weight: bold;">
+        ← Wróć do tematów
+    </a>
+
+    <h1 class="mt-4 mb-3" style="font-size: 2.5rem; color: #2c3e50; font-weight: bold;">
+        Temat: {{ category.name }}
+    </h1>
+    <p class="text-muted mb-5" style="font-size: 1.2rem;">Wybierz kartę pracy do rozwiązania:</p>
+
+    <div class="list-group mx-auto">
+        {% for worksheet in worksheets %}
+            <a href="{% url 'lesson_detail' slug=worksheet.slug %}" 
+               class="d-flex justify-content-between align-items-center text-decoration-none" 
+               style="background: #ffffff; border-radius: 15px; margin-bottom: 15px; border: 2px solid #e3e6f0; padding: 25px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                
+                <h4 class="mb-0" style="color: #4e73df; font-weight: bold; text-align: left;">
+                    {{ worksheet.title }}
+                </h4>
+                
+                <span style="background: #ff6b81; color: white; padding: 10px 20px; border-radius: 25px; font-weight: bold;">
+                    Rozwiąż test ➔
+                </span>
+            </a>
+        {% empty %}
+            <div style="background: #fff; border-radius: 15px; padding: 40px; border: 2px dashed #ddd;">
+                <h4 style="color: #2c3e50;">Jeszcze pusto! 🍃</h4>
+                <p class="text-muted mb-0">Wkrótce pojawią się tu karty pracy dla tego zagadnienia.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

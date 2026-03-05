@@ -1,0 +1,14 @@
+# Ignorujemy środowisko wirtualne
+venv/
+env/
+
+# Ignorujemy bazę danych (bezpieczeństwo!)
+db.sqlite3
+*.sqlite3
+
+# Ignorujemy śmieci generowane przez Pythona
+__pycache__/
+*.pyc
+
+# Ignorujemy ukryte pliki z systemu Mac
+.DS_Store
